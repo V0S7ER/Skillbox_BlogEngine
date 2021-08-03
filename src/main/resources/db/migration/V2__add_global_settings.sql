@@ -1,0 +1,1 @@
+insert into global_settings (id, code, name, value) values (1, 'MILTIUSER_MODE', 'Многопользовательский режим', false), (2, 'POST_PREMODERATION', 'Премодерация постов', false), (3, 'STATISTICS_IS_PUBLIC', 'Показывать всем статистику блога', false);

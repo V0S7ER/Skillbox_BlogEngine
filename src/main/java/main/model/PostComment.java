@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "post_comments")
 @Data
@@ -13,8 +14,9 @@ public class PostComment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "parent_id")
-    private int parentId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_id")
+    private PostComment parent;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
@@ -29,4 +31,7 @@ public class PostComment {
 
     @Column(nullable = false)
     private String text;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
+    private List<PostComment> childComments;
 }
