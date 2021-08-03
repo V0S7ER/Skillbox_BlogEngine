@@ -1,7 +1,6 @@
 package main.model;
 
 import lombok.Data;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,11 +12,11 @@ import java.util.List;
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "is_active", nullable = false)
-    private int isActive;
+    private boolean isActive;
 
     @Column(name = "moderation_status", nullable = false)
     @Enumerated(value = EnumType.STRING)

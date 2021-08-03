@@ -19,5 +19,5 @@ public class GlobalSetting {
     private String name;
 
     @Column(nullable = false)
-    private String value;
+    private boolean value;
 }
