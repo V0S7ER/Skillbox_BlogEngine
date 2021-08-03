@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class GlobalSetting {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
@@ -19,5 +19,9 @@ public class GlobalSetting {
     private String name;
 
     @Column(nullable = false)
-    private String value;
+    private boolean value;
+
+    public boolean getValue() {
+        return value;
+    }
 }

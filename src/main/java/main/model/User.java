@@ -11,11 +11,11 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "is_moderator", nullable = false)
-    private int isModerator;
+    private boolean isModerator;
 
     @Column(name = "reg_time", nullable = false)
     private Date regTime;
