@@ -1,13 +1,11 @@
 package main.controller;
 
-import main.api.response.InitResponse;
-import main.api.response.SettingsResponse;
-import main.api.response.TagResponse;
-import main.repository.SettingsRepository;
-import main.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
+import main.model.api.response.InitResponse;
+import main.model.api.response.SettingsResponse;
+import main.model.api.response.TagResponse;
 import main.service.SettingsService;
 import main.service.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,19 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ApiGeneralController {
 
-    @Autowired
-    private SettingsRepository settingsRepository;
 
-    @Autowired
-    private TagRepository tagRepository;
-
+    private final SettingsService settingsService;
+    private final TagService tagService;
     private final InitResponse initResponse;
-
-    public ApiGeneralController(InitResponse initResponse) {
-        this.initResponse = initResponse;
-    }
 
     @GetMapping("/init")
     private ResponseEntity<InitResponse> init() {
@@ -37,7 +29,7 @@ public class ApiGeneralController {
 
     @GetMapping("/settings")
     private ResponseEntity<SettingsResponse> settings() {
-        return new ResponseEntity<>(SettingsService.getGlobalSettings(settingsRepository), HttpStatus.OK);
+        return new ResponseEntity<>(settingsService.getGlobalSettings(), HttpStatus.OK);
     }
 
     @GetMapping("/tag")
@@ -45,7 +37,7 @@ public class ApiGeneralController {
         if (query == null) {
             query = "";
         }
-        return new ResponseEntity<>(TagService.getTagResponse(query, tagRepository), HttpStatus.OK);
+        return new ResponseEntity<>(tagService.getTagResponse(query), HttpStatus.OK);
     }
 
 }

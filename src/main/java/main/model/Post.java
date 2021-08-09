@@ -1,5 +1,8 @@
 package main.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,12 +18,14 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @JsonIgnore
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(name = "moderation_status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private ModerationStatus moderationStatus = ModerationStatus.NEW;
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status", nullable = false, columnDefinition = "enum ('NEW', 'ACCEPTED', 'DECLINED')")
+    private ModerationStatus moderationStatus;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "moderator_id", nullable = false)
@@ -36,27 +41,46 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
+
     @Column(nullable = false)
     private String text;
 
     @Column(name = "view_count", nullable = false)
     private int viewCount;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     private List<PostVote> postVoteList;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     private List<PostComment> postCommentList;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "votedPosts")
     private List<User> votedUsers;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "commentedPosts")
     private List<User> commentedUsers;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "posts")
     private List<Tag> tags;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     private List<Tag2Post> tag2PostList;
+
+    @JsonGetter
+    @JsonProperty("voted_count")
+    public int getVotedCount() {
+        return votedUsers.size();
+    }
+
+    @JsonGetter
+    @JsonProperty("comment_count")
+    public int getCommentCount() {
+        return votedUsers.size();
+    }
 }

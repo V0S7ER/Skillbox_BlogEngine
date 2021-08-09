@@ -1,28 +1,20 @@
 package main.service;
 
-import main.api.response.PostResponse;
 import main.model.Post;
+import main.model.api.response.PostResponse;
 import main.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PostService {
 
-    private final static String POST_MODE_POPULAR = "popular";
-    private final static String POST_MODE_BEST = "best";
-    private final static String POST_MODE_EARLY = "early";
+    @Autowired
+    private PostRepository postRepository;
 
-    private PostService() {
-
-    }
-
-    public static PostResponse getPosts(Integer offset, Integer limit, String mode, PostRepository postRepository) {
+    public PostResponse getPosts(Integer offset, Integer limit, String mode) {
         int startOffset = 0;
         int startLimit = 0;
         offset = offset == null ? 0 : offset;
@@ -36,29 +28,32 @@ public class PostService {
                 postIterable.next();
             } else if (startLimit < limit) {
                 startLimit++;
-                postList.add(postIterable.next());
+                Post post = postIterable.next();
+                if (post.isActive()) {
+                    postList.add(post);
+                }
             }
         }
         int count = 0;
         for (Post post : postRepository.findAll()) {
-            count++;
+            count = post.isActive() ? count + 1 : count;
         }
         Comparator<Post> comparator;
-        switch (mode) {
-            case POST_MODE_BEST:
-                comparator = Comparator.comparing(o -> o.getVotedUsers().size());
-                comparator = comparator.reversed();
+        switch (PostMode.valueOf(mode.trim().toUpperCase(Locale.ROOT))) {
+            case BEST:
+                comparator = Comparator.comparing(Post::getVotedCount).reversed();
                 break;
-            case POST_MODE_EARLY:
+            case EARLY:
                 comparator = Comparator.comparing(Post::getTime);
                 break;
-            case POST_MODE_POPULAR:
-                comparator = Comparator.comparing(o -> o.getCommentedUsers().size());
-                comparator = comparator.reversed();
+            case POPULAR:
+                comparator = Comparator.comparing(Post::getCommentCount).reversed();
+                break;
+            case RECENT:
+                comparator = Comparator.comparing(Post::getTime).reversed();
                 break;
             default:
-                comparator = Comparator.comparing(Post::getTime);
-                comparator = comparator.reversed();
+                comparator = (o1, o2) -> 0;
                 break;
         }
         postList.sort(comparator);
