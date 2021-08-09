@@ -1,7 +1,7 @@
 package main.service;
 
-import main.api.response.PostResponse;
 import main.model.Post;
+import main.model.api.response.PostResponse;
 import main.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,10 @@ import java.util.List;
 @Service
 public class PostService {
 
-    private final static String POST_MODE_POPULAR = "popular";
-    private final static String POST_MODE_BEST = "best";
-    private final static String POST_MODE_EARLY = "early";
+    @Autowired
+    private PostRepository postRepository;
 
-    private PostService() {
-
-    }
-
-    public static PostResponse getPosts(Integer offset, Integer limit, String mode, PostRepository postRepository) {
+    public PostResponse getPosts(Integer offset, Integer limit, String mode) {
         int startOffset = 0;
         int startLimit = 0;
         offset = offset == null ? 0 : offset;
@@ -44,21 +39,24 @@ public class PostService {
             count++;
         }
         Comparator<Post> comparator;
-        switch (mode) {
-            case POST_MODE_BEST:
+        switch (PostMode.valueOf(mode.trim())) {
+            case BEST:
                 comparator = Comparator.comparing(o -> o.getVotedUsers().size());
                 comparator = comparator.reversed();
                 break;
-            case POST_MODE_EARLY:
+            case EARLY:
                 comparator = Comparator.comparing(Post::getTime);
                 break;
-            case POST_MODE_POPULAR:
+            case POPULAR:
                 comparator = Comparator.comparing(o -> o.getCommentedUsers().size());
                 comparator = comparator.reversed();
                 break;
-            default:
+            case RECENT:
                 comparator = Comparator.comparing(Post::getTime);
                 comparator = comparator.reversed();
+                break;
+            default:
+                comparator = (o1, o2) -> 0;
                 break;
         }
         postList.sort(comparator);

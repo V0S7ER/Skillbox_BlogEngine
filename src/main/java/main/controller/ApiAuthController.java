@@ -1,6 +1,6 @@
 package main.controller;
 
-import main.api.response.CheckResponse;
+import main.model.api.response.CheckResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

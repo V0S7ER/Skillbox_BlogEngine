@@ -1,7 +1,7 @@
 package main.service;
 
-import main.api.response.TagResponse;
 import main.model.Tag;
+import main.model.api.response.TagResponse;
 import main.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +14,10 @@ import java.util.Map;
 @Service
 public class TagService {
 
-    private TagService() {
+    @Autowired
+    private TagRepository tagRepository;
 
-    }
-
-    public static TagResponse getTagResponse(String query, TagRepository tagRepository) {
+    public TagResponse getTagResponse(String query) {
         Map<Tag, Integer> tag2count = new HashMap<>();
         Iterable<Tag> tagIterable = tagRepository.findAll();
         int maxWeight = -1;
@@ -31,7 +30,7 @@ public class TagService {
             }
             if (tagWeight > maxWeight) {
                 maxWeight = tagWeight;
-            };
+            }
             summaryCount++;
         }
 

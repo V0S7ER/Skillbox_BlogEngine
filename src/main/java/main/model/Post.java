@@ -18,9 +18,9 @@ public class Post {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(name = "moderation_status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private ModerationStatus moderationStatus = ModerationStatus.NEW;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status", nullable = false, columnDefinition = "enum ('NEW', 'ACCEPTED', 'DECLINED')")
+    private ModerationStatus moderationStatus;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "moderator_id", nullable = false)
@@ -59,4 +59,9 @@ public class Post {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     private List<Tag2Post> tag2PostList;
+
+    @Enumerated(EnumType.STRING)
+    public ModerationStatus getModerationStatus() {
+        return moderationStatus;
+    }
 }
