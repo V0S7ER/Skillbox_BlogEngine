@@ -39,10 +39,10 @@ public class PostService {
             count = post.isActive() ? count + 1 : count;
         }
         Comparator<Post> comparator;
+
         switch (PostMode.valueOf(mode.trim().toUpperCase(Locale.ROOT))) {
             case BEST:
                 comparator = Comparator.comparing(Post::getVotedCount).reversed();
-                break;
             case EARLY:
                 comparator = Comparator.comparing(Post::getTime);
                 break;
